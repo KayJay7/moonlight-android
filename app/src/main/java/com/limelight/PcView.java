@@ -8,6 +8,7 @@ import com.limelight.binding.PlatformBinding;
 import com.limelight.binding.crypto.AndroidCryptoProvider;
 import com.limelight.computers.ComputerManagerListener;
 import com.limelight.computers.ComputerManagerService;
+import com.limelight.gl.ShaderRenderer;
 import com.limelight.grid.PcGridAdapter;
 import com.limelight.grid.assets.DiskAssetLoader;
 import com.limelight.nvstream.http.ComputerDetails;
@@ -197,31 +198,7 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
             GLSurfaceView surfaceView = new GLSurfaceView(this);
             surfaceView.setEGLContextClientVersion(2);
             surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-            surfaceView.setRenderer(new GLSurfaceView.Renderer() {
-                @Override
-                public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-                    // Save the GLRenderer string so we don't need to do this next time
-                    glPrefs.glRenderer = gl10.glGetString(GL10.GL_RENDERER);
-                    glPrefs.savedFingerprint = Build.FINGERPRINT;
-                    glPrefs.writePreferences();
-
-                    LimeLog.info("Fetched GL Renderer: " + glPrefs.glRenderer);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            completeOnCreate();
-                        }
-                    });
-                }
-                @Override
-                public void onSurfaceChanged(GL10 gl10, int i, int i1) {
-                }
-
-                @Override
-                public void onDrawFrame(GL10 gl10) {
-                }
-            });
+            surfaceView.setRenderer(new ShaderRenderer(this, glPrefs));
             setContentView(surfaceView);
         }
         else {
@@ -230,7 +207,7 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
         }
     }
 
-    private void completeOnCreate() {
+    public void completeOnCreate() {
         completeOnCreateCalled = true;
 
         shortcutHelper = new ShortcutHelper(this);
