@@ -195,6 +195,8 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
         final GlPreferences glPrefs = GlPreferences.readPreferences(this);
         if (!glPrefs.savedFingerprint.equals(Build.FINGERPRINT) || glPrefs.glRenderer.isEmpty()) {
             GLSurfaceView surfaceView = new GLSurfaceView(this);
+            surfaceView.setEGLContextClientVersion(2);
+            surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
             surfaceView.setRenderer(new GLSurfaceView.Renderer() {
                 @Override
                 public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
@@ -212,7 +214,6 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
                         }
                     });
                 }
-
                 @Override
                 public void onSurfaceChanged(GL10 gl10, int i, int i1) {
                 }
